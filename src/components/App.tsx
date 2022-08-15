@@ -53,6 +53,7 @@ function App() {
             </div>
 
             <Flow />
+            <div style={{width: '100%', borderTop: '1px solid silver'}} />
             <SelectedNodeResultTable />
         </div>
     );

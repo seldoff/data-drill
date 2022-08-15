@@ -1,4 +1,4 @@
-import {MNode, MNodeType, Model} from '../model';
+import {MNodeType, Model} from '../model';
 import {Query} from './queryModel';
 import {Result} from '../utils';
 
@@ -7,7 +7,8 @@ const notImplemented: Result<Query> = {
     message: 'Not implemented',
 };
 
-export function generateQuery(node: MNode, model: Model): Result<Query> {
+export function generateQuery(nodeId: string, model: Model): Result<Query> {
+    const node = model.find(n => n.id === nodeId)!;
     switch (node.type) {
         case MNodeType.table:
             if (node.table !== undefined) {
@@ -29,8 +30,7 @@ export function generateQuery(node: MNode, model: Model): Result<Query> {
             return notImplemented;
         case MNodeType.result:
             if (node.inputNode !== undefined) {
-                const inputNode = model.find(n => n.id === node.inputNode)!;
-                return generateQuery(inputNode, model);
+                return generateQuery(node.inputNode, model);
             } else {
                 return {
                     successful: false,

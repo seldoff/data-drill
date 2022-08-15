@@ -1,30 +1,37 @@
-import {useContext, useEffect, useMemo, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {QueryExecResult} from 'sql.js';
-import {ExecuteQueryContext} from './ExecuteQueryContext';
 import {Spinner} from './Spinner';
 import {Table} from './Table';
-import {Result} from '../utils';
-import {useSelector} from '../redux/store';
+import {bind, map, Result} from '../utils';
+import {DbContext} from './DbContext';
+import {generateQuery} from '../sql/generateQuery';
+import {printQuery} from '../sql/printQuery';
+import {executeQuery} from '../sql/sqlite';
+import {Model} from '../model';
 
-export function ResultTable(props: {nodeId: string}) {
-    const [result, setResult] = useState<Result<QueryExecResult>>();
-    const executeQuery = useContext(ExecuteQueryContext)!;
-    const model = useSelector(s => s.model.model);
+export function ResultTable(props: {nodeId: string; model: Model}) {
+    const [data, setData] = useState<Result<QueryExecResult> | undefined>();
+    const model = props.model;
 
-    const node = useMemo(() => model.find(n => n.id === props.nodeId)!, [model, props.nodeId]);
+    const db = useContext(DbContext)!;
 
     useEffect(() => {
-        setResult(executeQuery(node, model));
-    }, [executeQuery, model, node]);
+        const query = generateQuery(props.nodeId, model);
+        const printed = map(query, printQuery);
+        const data = bind(printed, q => executeQuery(db, q));
+        setData(data);
+    }, [db, model, props.nodeId]);
 
-    if (result === undefined) {
+    if (data === undefined) {
         return <Spinner />;
-    } else if (!result.successful) {
-        return <div className="error-msg">{result.message}</div>;
+    }
+
+    if (!data.successful) {
+        return <div className="error-msg">{data.message}</div>;
     } else {
         return (
             <div style={{overflowY: 'scroll', maxHeight: '200px'}}>
-                <Table data={result.data} />
+                <Table data={data.data} />
             </div>
         );
     }
