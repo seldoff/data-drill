@@ -1,4 +1,6 @@
-# <img src="/public/drill.webp" alt="Data Drill" style="width:128px;"/> Data-Drill
+<img src="/public/drill.webp" alt="Data Drill" style="width:128px;"/> 
+
+# Data-Drill
 
 ![](https://github.com/seldoff/data-drill/actions/workflows/codeql-analysis.yml/badge.svg) 
 ![](https://github.com/seldoff/data-drill/actions/workflows/deploy-gh-pages.yml/badge.svg)
