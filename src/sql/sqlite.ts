@@ -20,7 +20,61 @@ export async function connectToDb(): Promise<Database> {
     });
 }
 
-export function executeQuery(db: Database, query: string): Result<QueryExecResult> {
+type CacheItem = {
+    timestamp: Date;
+    data: Result<QueryExecResult>;
+};
+
+type DatabaseCache = Map<string, CacheItem>;
+
+const cache = new WeakMap<Database, DatabaseCache>();
+
+function cleanCache(dbCache: DatabaseCache, now: Date) {
+    const minTimestamp = now.getTime() - 60_000;
+    for (const [key, item] of dbCache) {
+        if (item.timestamp.getTime() < minTimestamp) {
+            dbCache.delete(key);
+        }
+    }
+}
+
+function getFromCache(
+    db: Database,
+    query: string,
+    allowedCacheAgeSeconds: number | undefined,
+    factory: () => Result<QueryExecResult>
+): Result<QueryExecResult> {
+    let dbCache = cache.get(db);
+    if (dbCache === undefined) {
+        dbCache = new Map();
+        cache.set(db, dbCache);
+    }
+
+    const now = new Date();
+
+    cleanCache(dbCache, now);
+
+    let cacheItem = dbCache.get(query);
+    if (
+        allowedCacheAgeSeconds === undefined ||
+        cacheItem === undefined ||
+        now.getTime() - cacheItem.timestamp.getTime() > allowedCacheAgeSeconds * 1000
+    ) {
+        const data = factory();
+        if (data.successful) {
+            cacheItem = {
+                timestamp: now,
+                data,
+            };
+            dbCache.set(query, cacheItem);
+        }
+        return data;
+    }
+
+    return cacheItem.data;
+}
+
+function executeQueryImpl(db: Database, query: string): Result<QueryExecResult> {
     try {
         const data = db.exec(query)[0];
         console.log('executeQuery', query, data);
@@ -37,4 +91,12 @@ export function executeQuery(db: Database, query: string): Result<QueryExecResul
         console.log('executeQuery', query, message);
         return {successful: false, message};
     }
+}
+
+export function executeQuery(
+    db: Database,
+    query: string,
+    allowedCacheAgeSeconds: number | undefined = 30
+): Result<QueryExecResult> {
+    return getFromCache(db, query, allowedCacheAgeSeconds, () => executeQueryImpl(db, query));
 }
