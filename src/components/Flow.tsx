@@ -6,6 +6,7 @@ import ReactFlow, {
     Edge,
     useEdgesState,
     useNodesState,
+    MarkerType,
 } from 'react-flow-renderer';
 import {nodeTypes} from './nodes/common';
 import {modelActions, useDispatch, useSelector} from '../redux/store';
@@ -15,9 +16,10 @@ import {NodeUpdate} from '../redux/model';
 import {Connection} from 'react-flow-renderer/dist/esm/types/general';
 import {getInputNode} from '../model';
 import {uuid} from '../utils';
+import {ModelContext} from './ModelContext';
 
 export function Flow() {
-    const mNodes = useSelector(s => s.model.nodes);
+    const model = useSelector(s => s.model.model);
     const dispatch = useDispatch();
 
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -26,11 +28,11 @@ export function Flow() {
     useEffect(() => {
         setNodes(nodes => {
             const removedNodes = new Map(
-                nodes.filter(n => mNodes.findIndex(mn => mn.id === n.id) === -1).map(n => [n.id, n])
+                nodes.filter(n => model.findIndex(mn => mn.id === n.id) === -1).map(n => [n.id, n])
             );
             const updatedNodes = new Map<string, Node>();
             const addedNodes: Node[] = [];
-            for (const mNode of mNodes) {
+            for (const mNode of model) {
                 const node = nodes.find(n => n.id === mNode.id);
                 if (node !== undefined) {
                     if (node.data !== mNode) {
@@ -61,7 +63,7 @@ export function Flow() {
         });
 
         setEdges(edges => {
-            const connections = mNodes
+            const connections = model
                 .map(n => {
                     const inputNode = getInputNode(n);
                     return inputNode !== undefined ? {source: inputNode, target: n.id} : undefined;
@@ -81,7 +83,7 @@ export function Flow() {
             );
 
             const addedEdges: Edge[] = [];
-            for (const node of mNodes) {
+            for (const node of model) {
                 const inputNode = getInputNode(node);
                 if (inputNode === undefined) {
                     continue;
@@ -104,7 +106,7 @@ export function Flow() {
             newEdges = newEdges.concat(addedEdges);
             return newEdges;
         });
-    }, [mNodes, setNodes, setEdges]);
+    }, [model, setNodes, setEdges]);
 
     const onNodeDragStop = useCallback<NodeDragHandler>(
         (_, __, nodes) => {
@@ -125,9 +127,10 @@ export function Flow() {
     );
 
     return (
-        <>
+        <ModelContext.Provider value={model}>
             <ReactFlow
                 defaultZoom={1.2}
+                defaultEdgeOptions={{markerEnd: {type: MarkerType.ArrowClosed}}}
                 nodeTypes={nodeTypes}
                 nodes={nodes}
                 edges={edges}
@@ -139,6 +142,6 @@ export function Flow() {
                 <Controls />
                 <Background variant={BackgroundVariant.Lines} />
             </ReactFlow>
-        </>
+        </ModelContext.Provider>
     );
 }

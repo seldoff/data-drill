@@ -1,4 +1,5 @@
-import sqlFactory, {Database} from 'sql.js';
+import sqlFactory, {Database, QueryExecResult} from 'sql.js';
+import {Result} from '../utils';
 
 const dbUrl =
     'https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';
@@ -16,4 +17,20 @@ export async function connectToDb(): Promise<Database> {
         (window as any).db = db;
         return db;
     });
+}
+
+export function executeQuery(db: Database, query: string): Result<QueryExecResult> {
+    query = query + ' LIMIT 50';
+    console.log('executeQuery', query);
+    try {
+        return {
+            successful: true,
+            data: db.exec(query)[0],
+        };
+    } catch (e: any) {
+        const message: string =
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            typeof e.message === 'string' ? (e.message as string) : 'Unknown database error';
+        return {successful: false, message};
+    }
 }

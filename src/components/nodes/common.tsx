@@ -1,5 +1,5 @@
 import {FilterNode} from './FilterNode';
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import {NodeProps} from 'react-flow-renderer';
 import classNames from 'classnames';
 import {TableNode} from './TableNode';
@@ -12,10 +12,10 @@ export const nodeTypes = {
     [MNodeType.result]: ResultNode,
 };
 
-export function createNode<T>(component: React.FC<NodeProps<T>>) {
+export function createNode<T>(component: React.FC<NodeProps<T>>, style?: CSSProperties) {
     return (props: NodeProps<T>) => {
         return (
-            <div className={classNames('node', {'node-selected': props.selected})}>
+            <div style={style} className={classNames('node', {'node-selected': props.selected})}>
                 {component(props)}
             </div>
         );

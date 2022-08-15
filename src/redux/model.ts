@@ -1,13 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {MNode, MNodeType} from '../model';
+import {MNode, MNodeType, Model} from '../model';
 import {uuid} from '../utils';
 
 type ModelState = {
-    nodes: MNode[];
+    model: Model;
 };
 
 const initialState: ModelState = {
-    nodes: [{type: MNodeType.table, id: uuid(), position: {x: 10, y: 10}}],
+    model: [{type: MNodeType.table, id: uuid(), position: {x: 10, y: 10}}],
 };
 
 export type NodeUpdate = Partial<MNode>;
@@ -17,25 +17,25 @@ export const modelSlice = createSlice({
     initialState,
     reducers: {
         addNodes(state, action: PayloadAction<MNode[]>) {
-            state.nodes = state.nodes.concat(action.payload);
+            state.model = state.model.concat(action.payload);
         },
         updateNodes(state, action: PayloadAction<NodeUpdate[]>) {
             for (const update of action.payload) {
-                const idx = state.nodes.findIndex(n => n.id === update.id);
-                state.nodes[idx] = {
-                    ...state.nodes[idx],
+                const idx = state.model.findIndex(n => n.id === update.id);
+                state.model[idx] = {
+                    ...state.model[idx],
                     ...update,
                 };
             }
         },
         removeNodes(state, action: PayloadAction<string[]>) {
             for (const id of action.payload) {
-                const idx = state.nodes.findIndex(n => n.id === id);
-                state.nodes.splice(idx, 1);
+                const idx = state.model.findIndex(n => n.id === id);
+                state.model.splice(idx, 1);
             }
         },
         clear(state) {
-            state.nodes = [];
+            state.model = [];
         },
         save(state) {
             localStorage.setItem('model', JSON.stringify(state));

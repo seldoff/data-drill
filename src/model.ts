@@ -28,6 +28,8 @@ export type MResultNode = MBaseNode & {
 
 export type MNode = MTableNode | MFilterNode | MResultNode;
 
+export type Model = MNode[];
+
 export function getInputNode(node: MNode): string | undefined {
     switch (node.type) {
         case MNodeType.filter:

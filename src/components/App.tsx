@@ -38,7 +38,7 @@ function App() {
         return <Spinner />;
     }
     return (
-        <div style={{height: '300px', width: '800px'}}>
+        <div style={{height: '500px', width: '800px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <div style={{display: 'flex', gap: '4px'}}>
                     <button onClick={addTable}>Table</button>
