@@ -9,17 +9,14 @@ import {schemaSlice} from './schema';
 import {modelSlice} from './model';
 import {uiSlice} from './ui';
 
-const isProduction = process.env.NODE_ENV !== 'production';
-const loggerMiddleware = isProduction ? [logger] : [];
-
 export const store = configureStore({
     reducer: {
         schema: schemaSlice.reducer,
         model: modelSlice.reducer,
         ui: uiSlice.reducer,
     },
-    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(loggerMiddleware),
-    devTools: !isProduction,
+    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger),
+    devTools: process.env.NODE_ENV !== 'production',
 });
 
 export type RootState = ReturnType<typeof store.getState>;

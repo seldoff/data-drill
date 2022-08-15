@@ -7,6 +7,7 @@ import ReactFlow, {
     useEdgesState,
     useNodesState,
     MarkerType,
+    OnEdgesDelete,
 } from 'react-flow-renderer';
 import {nodeTypes} from './nodes/common';
 import {modelActions, uiActions, useDispatch, useSelector} from '../redux/store';
@@ -14,6 +15,7 @@ import {
     Node,
     NodeDragHandler,
     OnConnect,
+    OnNodesDelete,
     OnSelectionChangeFunc,
 } from 'react-flow-renderer/dist/esm/types';
 import {useCallback, useEffect} from 'react';
@@ -138,6 +140,25 @@ export function Flow() {
         [dispatch]
     );
 
+    const onNodesDelete = useCallback<OnNodesDelete>(
+        nodes => {
+            const ids = nodes.map(n => n.id);
+            dispatch(modelActions.removeNodes(ids));
+        },
+        [dispatch]
+    );
+
+    const onEdgesDelete = useCallback<OnEdgesDelete>(
+        edges => {
+            const updates = edges.map(e => ({
+                id: e.target,
+                inputNode: undefined,
+            }));
+            dispatch(modelActions.updateNodes(updates));
+        },
+        [dispatch]
+    );
+
     return (
         <ReactFlow
             defaultZoom={1.2}
@@ -145,11 +166,14 @@ export function Flow() {
             nodeTypes={nodeTypes}
             nodes={nodes}
             edges={edges}
+            deleteKeyCode="Delete"
             onNodesChange={onNodesChange}
             onNodeDragStop={onNodeDragStop}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             onSelectionChange={onSelectionChange}
+            onNodesDelete={onNodesDelete}
+            onEdgesDelete={onEdgesDelete}
         >
             <Controls />
             <Background variant={BackgroundVariant.Lines} />

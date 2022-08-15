@@ -1,5 +1,5 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {MNode, MNodeType, Model} from '../model';
+import {createSlice, Draft, PayloadAction} from '@reduxjs/toolkit';
+import {getInputNode, MNode, MNodeType, Model} from '../model';
 import {uuid} from '../utils';
 
 type ModelState = {
@@ -10,7 +10,18 @@ const initialState: ModelState = {
     model: [{type: MNodeType.table, id: uuid(), position: {x: 10, y: 10}}],
 };
 
-export type NodeUpdate = Partial<MNode>;
+export type NodeUpdate = Partial<MNode> & Pick<MNode, 'id'>;
+
+function updateNodes(state: Draft<ModelState>, updates: NodeUpdate[]) {
+    for (const update of updates) {
+        const idx = state.model.findIndex(n => n.id === update.id);
+        const node = state.model[idx];
+        state.model[idx] = {
+            ...node,
+            ...update,
+        } as MNode;
+    }
+}
 
 export const modelSlice = createSlice({
     name: 'model',
@@ -20,20 +31,27 @@ export const modelSlice = createSlice({
             state.model = state.model.concat(action.payload);
         },
         updateNodes(state, action: PayloadAction<NodeUpdate[]>) {
-            for (const update of action.payload) {
-                const idx = state.model.findIndex(n => n.id === update.id);
-                const node = state.model[idx];
-                state.model[idx] = {
-                    ...node,
-                    ...update,
-                } as MNode;
-            }
+            updateNodes(state, action.payload);
         },
         removeNodes(state, action: PayloadAction<string[]>) {
+            let allUpdates: NodeUpdate[] = [];
             for (const id of action.payload) {
                 const idx = state.model.findIndex(n => n.id === id);
                 state.model.splice(idx, 1);
+
+                const updates: NodeUpdate[] = state.model
+                    .map(n => {
+                        const input = getInputNode(n);
+                        if (input === id) {
+                            return {id: n.id, type: n.type, inputNode: undefined} as NodeUpdate;
+                        }
+                        return undefined;
+                    })
+                    .filter(u => u !== undefined)
+                    .map(u => u!);
+                allUpdates = allUpdates.concat(updates);
             }
+            updateNodes(state, allUpdates);
         },
         clear(state) {
             state.model = [];
