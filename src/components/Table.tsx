@@ -1,4 +1,5 @@
 import {QueryExecResult} from 'sql.js';
+import '../styles/Table.css';
 
 export function Table(props: {data: QueryExecResult}) {
     return (
