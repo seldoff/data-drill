@@ -75,12 +75,14 @@ function getFromCache(
 }
 
 function executeQueryImpl(db: Database, query: string): Result<QueryExecResult> {
+    const t1 = performance.now();
+    let result: Result<QueryExecResult> | undefined = undefined;
     try {
         const data = db.exec(query)[0];
-        console.log('executeQuery', query, data);
-        return data !== undefined
-            ? {successful: true, data}
-            : {successful: false, message: 'Database returned no rows'};
+        result =
+            data !== undefined
+                ? {successful: true, data}
+                : {successful: false, message: 'Database returned no rows'};
     } catch (e: any) {
         const message: string =
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -88,9 +90,22 @@ function executeQueryImpl(db: Database, query: string): Result<QueryExecResult> 
                 ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                   `Database error: "${e.message as string}"`
                 : 'Unknown database error';
-        console.log('executeQuery', query, message);
-        return {successful: false, message};
+        result = {successful: false, message};
+    } finally {
+        if (result !== undefined) {
+            const t2 = performance.now();
+            const elapsed = t2 - t1;
+            const elapsedMsg =
+                elapsed < 1000 ? `${Math.round(t2 - t1)}ms` : `${Math.round((t2 - t1) / 1000)}s`;
+            const msg = `executed query in ${elapsedMsg}`;
+            if (result.successful) {
+                console.log(msg, query, result.data);
+            } else {
+                console.log(msg, query, result.message);
+            }
+        }
     }
+    return result;
 }
 
 export function executeQuery(
