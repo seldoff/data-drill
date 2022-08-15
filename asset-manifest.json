@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/data-drill/static/css/main.0971cfb0.css",
-    "main.js": "/data-drill/static/js/main.37e894c4.js",
+    "main.js": "/data-drill/static/js/main.7558267a.js",
     "index.html": "/data-drill/index.html",
     "main.0971cfb0.css.map": "/data-drill/static/css/main.0971cfb0.css.map",
-    "main.37e894c4.js.map": "/data-drill/static/js/main.37e894c4.js.map"
+    "main.7558267a.js.map": "/data-drill/static/js/main.7558267a.js.map"
   },
   "entrypoints": [
     "static/css/main.0971cfb0.css",
-    "static/js/main.37e894c4.js"
+    "static/js/main.7558267a.js"
   ]
 }
