@@ -6,8 +6,11 @@ function ResultNodeImpl(props: NodeProps<MResultNode>) {
     return (
         <>
             <Handle type="target" position={Position.Left} />
+            <Handle type="source" position={Position.Right} />
             <div>Result</div>
-            {props.data.input === undefined ? <div className="node-error-msg">No input</div> : null}
+            {props.data.inputNode === undefined ? (
+                <div className="node-error-msg">No input</div>
+            ) : null}
         </>
     );
 }

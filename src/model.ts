@@ -9,7 +9,6 @@ export enum MNodeType {
 type MBaseNode = {
     id: string;
     position: XYPosition;
-    type: MNodeType;
 };
 
 export type MTableNode = MBaseNode & {
@@ -19,14 +18,23 @@ export type MTableNode = MBaseNode & {
 
 export type MFilterNode = MBaseNode & {
     type: MNodeType.filter;
-    input?: MNodeWithOutput;
+    inputNode?: string;
 };
 
 export type MResultNode = MBaseNode & {
     type: MNodeType.result;
-    input?: MNodeWithOutput;
+    inputNode?: string;
 };
 
-export type MNodeWithOutput = MTableNode | MFilterNode;
-
 export type MNode = MTableNode | MFilterNode | MResultNode;
+
+export function getInputNode(node: MNode): string | undefined {
+    switch (node.type) {
+        case MNodeType.filter:
+            return node.inputNode;
+        case MNodeType.result:
+            return node.inputNode;
+        case MNodeType.table:
+            return undefined;
+    }
+}

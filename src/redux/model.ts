@@ -10,7 +10,7 @@ const initialState: ModelState = {
     nodes: [{type: MNodeType.table, id: uuid(), position: {x: 10, y: 10}}],
 };
 
-export type NodeUpdate = Omit<Partial<MNode>, 'type'>;
+export type NodeUpdate = Partial<MNode>;
 
 export const modelSlice = createSlice({
     name: 'model',

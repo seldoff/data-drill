@@ -1,5 +1,5 @@
 import {Handle, NodeProps, Position} from 'react-flow-renderer';
-import {ChangeEventHandler, useCallback, useEffect, useMemo} from 'react';
+import {ChangeEventHandler, useCallback, useMemo} from 'react';
 import {modelActions, useDispatch, useSelector} from '../../redux/store';
 import {MTableNode} from '../../model';
 import {createNode} from './common';
@@ -17,7 +17,7 @@ function TableNodeImpl(props: NodeProps<MTableNode>) {
                     {
                         id: mnode.id,
                         table,
-                    } as MTableNode,
+                    },
                 ])
             );
         },
@@ -38,15 +38,9 @@ function TableNodeImpl(props: NodeProps<MTableNode>) {
         ];
     }, [tables]);
 
-    useEffect(() => {
-        if (props.selected) {
-            //dispatch();
-        }
-    }, [props.selected]);
-
     return (
         <>
-            <Handle type="source" position={Position.Right} />
+            <Handle type="source" id="" position={Position.Right} />
             <div>Table</div>
             <select value={mnode.table} onChange={changeTable}>
                 {options}
