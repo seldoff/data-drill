@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/data-drill/static/css/main.c70eccfa.css",
+    "main.js": "/data-drill/static/js/main.42ee8717.js",
+    "index.html": "/data-drill/index.html",
+    "main.c70eccfa.css.map": "/data-drill/static/css/main.c70eccfa.css.map",
+    "main.42ee8717.js.map": "/data-drill/static/js/main.42ee8717.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c70eccfa.css",
+    "static/js/main.42ee8717.js"
+  ]
+}
