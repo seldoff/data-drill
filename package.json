@@ -34,6 +34,7 @@
     "gh-pages": "^4.0.0",
     "prettier": "2.7.1",
     "react-scripts": "5.0.1",
+    "source-map-explorer": "^2.5.2",
     "typescript": "^4.7.4"
   },
   "scripts": {
@@ -41,7 +42,8 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "analyze": "npm run build & source-map-explorer 'build/static/js/*.js'"
   },
   "browserslist": {
     "production": [
