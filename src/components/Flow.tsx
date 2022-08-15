@@ -175,7 +175,7 @@ export function Flow() {
             onNodesDelete={onNodesDelete}
             onEdgesDelete={onEdgesDelete}
         >
-            <Controls />
+            <Controls showInteractive={false} />
             <Background variant={BackgroundVariant.Lines} />
         </ReactFlow>
     );
