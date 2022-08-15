@@ -1,0 +1,18 @@
+.node {
+    background: #fff;
+    border: 1px solid #565656;
+    border-radius: 2px;
+    color: #222;
+    font-size: 12px;
+    padding: 4px;
+    text-align: left;
+    width: 150px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.node-selected {
+    border: 1px solid #7A75E5FF;
+}
