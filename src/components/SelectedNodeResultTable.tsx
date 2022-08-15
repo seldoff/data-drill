@@ -19,9 +19,9 @@ export function SelectedNodeResultTable() {
 
     const left =
         selectedNode !== undefined ? (
-            <ResultTable nodeId={selectedNode} model={model} />
+            <ResultTable nodeId={selectedNode} model={model} errorClassName="error-msg" />
         ) : (
-            <div className="error-msg">Please select node</div>
+            <div style={{color: 'silver'}}>Please select node</div>
         );
 
     return (

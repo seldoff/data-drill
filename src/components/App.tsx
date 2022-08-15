@@ -4,8 +4,7 @@ import {Spinner} from './Spinner';
 import {SelectedNodeResultTable} from './SelectedNodeResultTable';
 import {Flow} from './Flow';
 import {useCallback} from 'react';
-import {MNodeType} from '../model';
-import {uuid} from '../utils';
+import {createEmptyNode, MNodeType} from '../model';
 
 function App() {
     const isLoaded = useSelector(s => s.schema.isLoaded);
@@ -13,15 +12,7 @@ function App() {
 
     const addNode = useCallback(
         (type: MNodeType) => {
-            dispatch(
-                modelActions.addNodes([
-                    {
-                        type,
-                        id: uuid(),
-                        position: {x: 0, y: 0},
-                    },
-                ])
-            );
+            dispatch(modelActions.addNodes([createEmptyNode(type)]));
         },
         [dispatch]
     );

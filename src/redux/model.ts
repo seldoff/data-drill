@@ -22,10 +22,11 @@ export const modelSlice = createSlice({
         updateNodes(state, action: PayloadAction<NodeUpdate[]>) {
             for (const update of action.payload) {
                 const idx = state.model.findIndex(n => n.id === update.id);
+                const node = state.model[idx];
                 state.model[idx] = {
-                    ...state.model[idx],
+                    ...node,
                     ...update,
-                };
+                } as MNode;
             }
         },
         removeNodes(state, action: PayloadAction<string[]>) {

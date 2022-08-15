@@ -5,6 +5,7 @@ const dbUrl =
     'https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';
 
 export async function connectToDb(): Promise<Database> {
+    // noinspection JSUnusedGlobalSymbols
     const sqlPromise = sqlFactory({
         locateFile: file => `https://sql.js.org/dist/${file}`,
     });
@@ -20,17 +21,20 @@ export async function connectToDb(): Promise<Database> {
 }
 
 export function executeQuery(db: Database, query: string): Result<QueryExecResult> {
-    query = query + ' LIMIT 50';
-    console.log('executeQuery', query);
     try {
-        return {
-            successful: true,
-            data: db.exec(query)[0],
-        };
+        const data = db.exec(query)[0];
+        console.log('executeQuery', query, data);
+        return data !== undefined
+            ? {successful: true, data}
+            : {successful: false, message: 'Database returned no rows'};
     } catch (e: any) {
         const message: string =
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            typeof e.message === 'string' ? (e.message as string) : 'Unknown database error';
+            typeof e.message === 'string'
+                ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                  `Database error: "${e.message as string}"`
+                : 'Unknown database error';
+        console.log('executeQuery', query, message);
         return {successful: false, message};
     }
 }

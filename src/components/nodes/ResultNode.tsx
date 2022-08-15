@@ -11,7 +11,7 @@ function ResultNodeImpl(props: NodeProps<MResultNode>) {
             <Handle type="target" position={Position.Left} />
             <Handle type="source" position={Position.Right} />
             <div>Result</div>
-            <ResultTable nodeId={props.data.id} model={model} />
+            <ResultTable nodeId={props.data.id} model={model} errorClassName="node-error-msg" />
         </div>
     );
 }

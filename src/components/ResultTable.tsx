@@ -9,7 +9,7 @@ import {printQuery} from '../sql/printQuery';
 import {executeQuery} from '../sql/sqlite';
 import {Model} from '../model';
 
-export function ResultTable(props: {nodeId: string; model: Model}) {
+export function ResultTable(props: {nodeId: string; model: Model; errorClassName: string}) {
     const [data, setData] = useState<Result<QueryExecResult> | undefined>();
     const model = props.model;
 
@@ -27,10 +27,10 @@ export function ResultTable(props: {nodeId: string; model: Model}) {
     }
 
     if (!data.successful) {
-        return <div className="error-msg">{data.message}</div>;
+        return <div className={props.errorClassName}>{data.message}</div>;
     } else {
         return (
-            <div style={{overflowY: 'scroll', maxHeight: '200px'}}>
+            <div style={{overflowY: 'auto', maxHeight: '200px'}}>
                 <Table data={data.data} />
             </div>
         );

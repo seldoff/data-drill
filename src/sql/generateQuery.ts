@@ -1,11 +1,6 @@
 import {MNodeType, Model} from '../model';
 import {Query} from './queryModel';
-import {Result} from '../utils';
-
-const notImplemented: Result<Query> = {
-    successful: false,
-    message: 'Not implemented',
-};
+import {map, Result} from '../utils';
 
 export function generateQuery(nodeId: string, model: Model): Result<Query> {
     const node = model.find(n => n.id === nodeId)!;
@@ -27,7 +22,23 @@ export function generateQuery(nodeId: string, model: Model): Result<Query> {
                 };
             }
         case MNodeType.filter:
-            return notImplemented;
+            if (node.inputNode !== undefined) {
+                const target = generateQuery(node.inputNode, model);
+                const trimmedFilter = node.filter.trim();
+                if (trimmedFilter.length === 0) {
+                    return target;
+                }
+                return map<Query, Query>(target, q => ({
+                    type: 'where',
+                    target: q,
+                    expression: trimmedFilter,
+                }));
+            } else {
+                return {
+                    successful: false,
+                    message: 'Please provide input',
+                };
+            }
         case MNodeType.result:
             if (node.inputNode !== undefined) {
                 return generateQuery(node.inputNode, model);

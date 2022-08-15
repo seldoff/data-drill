@@ -4,4 +4,10 @@ export type Select = {
     columns: string[];
 };
 
-export type Query = Select;
+export type Where = {
+    type: 'where';
+    target: Query;
+    expression: string;
+};
+
+export type Query = Select | Where;

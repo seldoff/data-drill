@@ -16,12 +16,13 @@ function TableNodeImpl(props: NodeProps<MTableNode>) {
                 modelActions.updateNodes([
                     {
                         id: mnode.id,
+                        type: mnode.type,
                         table,
                     },
                 ])
             );
         },
-        [dispatch, mnode.id]
+        [dispatch, mnode.id, mnode.type]
     );
 
     const options = useMemo(() => {
