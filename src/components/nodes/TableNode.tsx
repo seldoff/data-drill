@@ -33,7 +33,7 @@ function TableNodeImpl(props: NodeProps<MTableNode>) {
         ));
         return [
             <option key={-1} value="" hidden>
-                Select table
+                Please select table
             </option>,
             ...options,
         ];
@@ -42,6 +42,7 @@ function TableNodeImpl(props: NodeProps<MTableNode>) {
     return (
         <>
             <Handle type="source" id="" position={Position.Right} />
+
             <div>Table</div>
             <select value={mnode.table} onChange={changeTable}>
                 {options}

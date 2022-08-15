@@ -161,7 +161,7 @@ export function Flow() {
 
     return (
         <ReactFlow
-            defaultZoom={1.2}
+            defaultZoom={1}
             defaultEdgeOptions={{markerEnd: {type: MarkerType.ArrowClosed}}}
             nodeTypes={nodeTypes}
             nodes={nodes}

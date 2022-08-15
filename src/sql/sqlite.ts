@@ -1,5 +1,8 @@
 import sqlFactory, {Database, QueryExecResult} from 'sql.js';
 import {Result} from '../utils';
+import {Model} from '../model';
+import {generateQuery} from './generateQuery';
+import {printQuery} from './printQuery';
 
 const dbUrl =
     'https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';
@@ -114,4 +117,27 @@ export function executeQuery(
     allowedCacheAgeSeconds: number | undefined = 30
 ): Result<QueryExecResult> {
     return getFromCache(db, query, allowedCacheAgeSeconds, () => executeQueryImpl(db, query));
+}
+
+export type QueryForNodeResult = Result<{sql: string; data: Result<QueryExecResult>}>;
+
+export function executeQueryForNode(
+    db: Database,
+    nodeId: string,
+    model: Model
+): QueryForNodeResult {
+    const query = generateQuery(nodeId, model);
+    if (!query.successful) {
+        return query;
+    }
+
+    const printed = printQuery(query.data);
+    const data = executeQuery(db, printed);
+    return {
+        successful: true,
+        data: {
+            sql: printed,
+            data,
+        },
+    };
 }

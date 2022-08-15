@@ -18,6 +18,7 @@ function App() {
     );
 
     const addTable = useCallback(() => addNode(MNodeType.table), [addNode]);
+    const addColumns = useCallback(() => addNode(MNodeType.columns), [addNode]);
     const addFilter = useCallback(() => addNode(MNodeType.filter), [addNode]);
     const addResult = useCallback(() => addNode(MNodeType.result), [addNode]);
 
@@ -32,10 +33,11 @@ function App() {
         return <Spinner />;
     }
     return (
-        <div style={{height: '500px', width: '800px'}}>
+        <div style={{height: '500px', width: '1000px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <div style={{display: 'flex', gap: '4px'}}>
                     <button onClick={addTable}>Table</button>
+                    <button onClick={addColumns}>Columns</button>
                     <button onClick={addFilter}>Filter</button>
                     <button onClick={addResult}>Result</button>
                 </div>

@@ -48,5 +48,34 @@ export function generateQuery(nodeId: string, model: Model): Result<Query> {
                     message: 'Please provide input',
                 };
             }
+        case MNodeType.columns:
+            if (node.inputNode !== undefined) {
+                const query = generateQuery(node.inputNode, model);
+                if (node.selectedColumns.length === 0) {
+                    return query;
+                }
+
+                return map<Query, Query>(query, query => {
+                    let q = query;
+                    let exit = false;
+                    while (!exit) {
+                        switch (q.type) {
+                            case 'select':
+                                q.columns = node.selectedColumns;
+                                exit = true;
+                                break;
+                            case 'where':
+                                q = q.target;
+                                break;
+                        }
+                    }
+                    return query;
+                });
+            } else {
+                return {
+                    successful: false,
+                    message: 'Please provide input',
+                };
+            }
     }
 }

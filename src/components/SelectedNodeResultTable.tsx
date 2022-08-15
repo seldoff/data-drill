@@ -1,28 +1,46 @@
 import {useSelector} from '../redux/store';
-import {ResultTable} from './ResultTable';
 import {SqlDisplay} from './SqlDisplay';
-import {generateQuery} from '../sql/generateQuery';
-import {useMemo} from 'react';
-import {printQuery} from '../sql/printQuery';
-import {map} from '../utils';
+import {useContext, useEffect, useState} from 'react';
+import {executeQueryForNode, QueryForNodeResult} from '../sql/sqlite';
+import {DbContext} from './DbContext';
+import {Table} from './Table';
 
 export function SelectedNodeResultTable() {
     const selectedNode = useSelector(s => s.ui.selectedNode);
     const model = useSelector(s => s.model.model);
+    const db = useContext(DbContext)!;
+    const [result, setResult] = useState<QueryForNodeResult>();
 
-    const sql = useMemo(() => {
-        if (selectedNode === undefined) {
-            return undefined;
+    useEffect(() => {
+        if (selectedNode !== undefined) {
+            setResult(executeQueryForNode(db, selectedNode, model));
+        } else {
+            setResult(undefined);
         }
-        return map(generateQuery(selectedNode, model), printQuery);
-    }, [model, selectedNode]);
+    }, [db, model, selectedNode]);
 
-    const left =
-        selectedNode !== undefined ? (
-            <ResultTable nodeId={selectedNode} model={model} errorClassName="error-msg" />
-        ) : (
-            <div style={{color: 'silver'}}>Please select node</div>
-        );
+    if (result === undefined) {
+        return <div style={{color: 'silver'}}>Please select node</div>;
+    }
+
+    if (!result.successful) {
+        return <div className="error-msg">{result.message}</div>;
+    }
+
+    const {sql, data} = result.data;
+    const left = data.successful ? (
+        <div style={{overflowY: 'auto', maxHeight: '200px'}}>
+            <Table data={data.data} />
+        </div>
+    ) : (
+        <div className="error-msg">{data.message}</div>
+    );
+
+    let rowsNumber: string | null = null;
+    if (data.successful) {
+        const len = data.data.values.length;
+        rowsNumber = `Returned ${len} ${len === 1 ? 'row' : 'rows'}`;
+    }
 
     return (
         <table style={{tableLayout: 'fixed', width: '100%'}}>
@@ -30,7 +48,10 @@ export function SelectedNodeResultTable() {
                 <tr>
                     <td>{left}</td>
                     <td style={{verticalAlign: 'top'}}>
-                        {sql !== undefined ? <SqlDisplay sql={sql} showError={false} /> : null}
+                        <span>Query </span>
+                        <SqlDisplay sql={sql} />
+                        <p />
+                        {rowsNumber}
                     </td>
                 </tr>
             </tbody>
