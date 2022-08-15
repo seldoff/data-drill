@@ -1,7 +1,7 @@
 import '../styles/App.css';
 import {modelActions, useDispatch, useSelector} from '../redux/store';
 import {Spinner} from './Spinner';
-import {QueryResult} from './QueryResult';
+import {SelectedNodeResultTable} from './SelectedNodeResultTable';
 import {Flow} from './Flow';
 import {useCallback} from 'react';
 import {MNodeType} from '../model';
@@ -51,8 +51,9 @@ function App() {
                     <button onClick={restore}>Restore</button>
                 </div>
             </div>
+
             <Flow />
-            <QueryResult />
+            <SelectedNodeResultTable />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import {
 import logger from 'redux-logger';
 import {schemaSlice} from './schema';
 import {modelSlice} from './model';
+import {uiSlice} from './ui';
 
 const isProduction = process.env.NODE_ENV !== 'production';
 const loggerMiddleware = isProduction ? [logger] : [];
@@ -15,6 +16,7 @@ export const store = configureStore({
     reducer: {
         schema: schemaSlice.reducer,
         model: modelSlice.reducer,
+        ui: uiSlice.reducer,
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware().concat(loggerMiddleware),
     devTools: !isProduction,
@@ -27,3 +29,4 @@ export const useDispatch: () => typeof store.dispatch = useDispatchVanilla;
 
 export const schemaActions = schemaSlice.actions;
 export const modelActions = modelSlice.actions;
+export const uiActions = uiSlice.actions;

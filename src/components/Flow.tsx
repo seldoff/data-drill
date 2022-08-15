@@ -9,14 +9,18 @@ import ReactFlow, {
     MarkerType,
 } from 'react-flow-renderer';
 import {nodeTypes} from './nodes/common';
-import {modelActions, useDispatch, useSelector} from '../redux/store';
-import {Node, NodeDragHandler, OnConnect} from 'react-flow-renderer/dist/esm/types';
+import {modelActions, uiActions, useDispatch, useSelector} from '../redux/store';
+import {
+    Node,
+    NodeDragHandler,
+    OnConnect,
+    OnSelectionChangeFunc,
+} from 'react-flow-renderer/dist/esm/types';
 import {useCallback, useEffect} from 'react';
 import {NodeUpdate} from '../redux/model';
-import {Connection} from 'react-flow-renderer/dist/esm/types/general';
+import {Connection, OnSelectionChangeParams} from 'react-flow-renderer/dist/esm/types/general';
 import {getInputNode} from '../model';
 import {uuid} from '../utils';
-import {ModelContext} from './ModelContext';
 
 export function Flow() {
     const model = useSelector(s => s.model.model);
@@ -126,22 +130,29 @@ export function Flow() {
         [dispatch, setEdges]
     );
 
+    const onSelectionChange = useCallback<OnSelectionChangeFunc>(
+        (params: OnSelectionChangeParams) => {
+            const id = params.nodes.length === 1 ? params.nodes[0].id : undefined;
+            dispatch(uiActions.setSelectedNode(id));
+        },
+        [dispatch]
+    );
+
     return (
-        <ModelContext.Provider value={model}>
-            <ReactFlow
-                defaultZoom={1.2}
-                defaultEdgeOptions={{markerEnd: {type: MarkerType.ArrowClosed}}}
-                nodeTypes={nodeTypes}
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onNodeDragStop={onNodeDragStop}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-            >
-                <Controls />
-                <Background variant={BackgroundVariant.Lines} />
-            </ReactFlow>
-        </ModelContext.Provider>
+        <ReactFlow
+            defaultZoom={1.2}
+            defaultEdgeOptions={{markerEnd: {type: MarkerType.ArrowClosed}}}
+            nodeTypes={nodeTypes}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onNodeDragStop={onNodeDragStop}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onSelectionChange={onSelectionChange}
+        >
+            <Controls />
+            <Background variant={BackgroundVariant.Lines} />
+        </ReactFlow>
     );
 }
