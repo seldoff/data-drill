@@ -32,6 +32,7 @@ function FilterNodeImpl(props: NodeProps<MFilterNode>) {
             <div>Filter</div>
             <input
                 type="text"
+                spellCheck={false}
                 value={filter}
                 onChange={changeFilter}
                 onBlur={saveChanges}
