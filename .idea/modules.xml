@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/dlg.iml" filepath="$PROJECT_DIR$/.idea/dlg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/data-drill.iml" filepath="$PROJECT_DIR$/.idea/data-drill.iml" />
     </modules>
   </component>
 </project>
