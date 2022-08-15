@@ -28,6 +28,7 @@ function App() {
 
     const addTable = useCallback(() => addNode(MNodeType.table), [addNode]);
     const addFilter = useCallback(() => addNode(MNodeType.filter), [addNode]);
+    const addResult = useCallback(() => addNode(MNodeType.result), [addNode]);
 
     const clear = useCallback(() => dispatch(modelActions.clear()), [dispatch]);
     const save = useCallback(() => dispatch(modelActions.save()), [dispatch]);
@@ -42,6 +43,7 @@ function App() {
                 <div style={{display: 'flex', gap: '4px'}}>
                     <button onClick={addTable}>Table</button>
                     <button onClick={addFilter}>Filter</button>
+                    <button onClick={addResult}>Result</button>
                 </div>
                 <div style={{display: 'flex', gap: '4px'}}>
                     <button onClick={clear}>Clear</button>

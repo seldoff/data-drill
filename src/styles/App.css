@@ -16,3 +16,8 @@
 .node-selected {
     border: 1px solid #7A75E5FF;
 }
+
+.node-error-msg {
+    font-size: 10px;
+    color: silver;
+}
