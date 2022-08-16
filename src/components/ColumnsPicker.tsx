@@ -1,103 +1,113 @@
-import {ColumnSchema} from '../schema';
 import {ChangeEventHandler, useCallback} from 'react';
 
-function getPossibleOptions(possibleColumns: string[]) {
-    return possibleColumns.map(c => {
-        return (
-            <option key={c} value={c}>
-                {c}
+// To be able to safely use hardcoded keys
+const getColumnKey = (column: string) => 'c_' + column;
+
+function getOptions(
+    possibleColumns: string[],
+    selectedColumn: string | undefined,
+    emptyValue = ''
+) {
+    const options =
+        possibleColumns.length === 0
+            ? [
+                  <option key="npc" disabled>
+                      All possible columns are already selected
+                  </option>,
+              ]
+            : possibleColumns.map(c => {
+                  return (
+                      <option key={getColumnKey(c)} value={c}>
+                          {c}
+                      </option>
+                  );
+              });
+
+    if (selectedColumn === undefined) {
+        options.push(
+            <option key="psc" value={emptyValue} hidden>
+                Please select column
             </option>
         );
-    });
+    } else {
+        options.push(
+            <option key={getColumnKey(selectedColumn)} value={selectedColumn} hidden>
+                {selectedColumn}
+            </option>
+        );
+    }
+
+    return options;
 }
 
 function Selector(props: {
     possibleColumns: string[];
-    selectedColumn: string;
+    selectedColumn: string | undefined;
+    addColumn: (newColumn: string) => void;
     changeColumn: (prevColumn: string, newColumn: string) => void;
-    removeColumn: (column: string) => void;
 }) {
-    const {selectedColumn, changeColumn, removeColumn} = props;
+    const {possibleColumns, selectedColumn, addColumn, changeColumn} = props;
 
     const changeColumnCallback = useCallback<ChangeEventHandler<HTMLSelectElement>>(
         e => {
             const column = e.target.value;
-            changeColumn(selectedColumn, column);
+            if (selectedColumn === undefined) {
+                addColumn(column);
+            } else {
+                changeColumn(selectedColumn, column);
+            }
         },
-        [changeColumn, selectedColumn]
-    );
-
-    const removeColumnCallback = useCallback(
-        () => removeColumn(selectedColumn),
-        [removeColumn, selectedColumn]
-    );
-
-    const selectedOption = (
-        <option key={selectedColumn} value={selectedColumn} hidden>
-            {selectedColumn}
-        </option>
+        [addColumn, changeColumn, selectedColumn]
     );
 
     return (
-        <div style={{display: 'flex', gap: '2px'}}>
-            <select
-                value={props.selectedColumn}
-                onChange={changeColumnCallback}
-                style={{flex: '1'}}
-            >
-                {[selectedOption, ...getPossibleOptions(props.possibleColumns)]}
-            </select>
-            <button title="Remove" onClick={removeColumnCallback}>
-                -
-            </button>
-        </div>
+        <select
+            value={selectedColumn ?? ''}
+            onChange={changeColumnCallback}
+            style={{width: '100%', height: '100%'}}
+            title="Select Column"
+        >
+            {getOptions(possibleColumns, selectedColumn)}
+        </select>
     );
 }
 
 export function ColumnsPicker(props: {
-    possibleColumns: ColumnSchema[];
+    possibleColumns: string[];
     selectedColumns: string[];
+    getColumnControls: (column: string) => JSX.Element;
     addColumn: (column: string) => void;
     changeColumn: (prevColumn: string, newColumn: string) => void;
-    removeColumn: (column: string) => void;
 }) {
-    const {addColumn} = props;
+    const {selectedColumns, addColumn, changeColumn} = props;
+    const possibleColumns = props.possibleColumns.filter(c => !selectedColumns.includes(c));
 
-    const addColumnCallback = useCallback<ChangeEventHandler<HTMLSelectElement>>(
-        e => addColumn(e.target.value),
-        [addColumn]
-    );
-
-    const possibleColumns = props.possibleColumns
-        .filter(c => !props.selectedColumns.includes(c.name))
-        .map(c => c.name);
-
-    let emptySelector: JSX.Element | null = null;
-    if (possibleColumns.length > 0) {
-        const emptyOption = (
-            <option key="-1" value="" hidden>
-                Please select column
-            </option>
-        );
-
-        emptySelector = (
-            <select onChange={addColumnCallback} value="">
-                {[emptyOption, ...getPossibleOptions(possibleColumns)]}
-            </select>
-        );
-    }
+    const emptySelector =
+        possibleColumns.length > 0 ? (
+            <Selector
+                key="empty"
+                possibleColumns={possibleColumns}
+                selectedColumn={undefined}
+                addColumn={addColumn}
+                changeColumn={changeColumn}
+            />
+        ) : null;
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', gap: '2px'}}>
-            {props.selectedColumns.map(c => {
+            {selectedColumns.map(c => {
                 return (
-                    <Selector
-                        key={c}
-                        selectedColumn={c}
-                        possibleColumns={possibleColumns}
-                        changeColumn={props.changeColumn}
-                        removeColumn={props.removeColumn}
-                    />
+                    <div key={getColumnKey(c)} style={{display: 'flex', gap: '2px'}}>
+                        <div style={{flex: '1'}}>
+                            <Selector
+                                selectedColumn={c}
+                                possibleColumns={possibleColumns}
+                                addColumn={addColumn}
+                                changeColumn={changeColumn}
+                            />
+                        </div>
+                        {props.getColumnControls(c)}
+                    </div>
                 );
             })}
             {emptySelector}

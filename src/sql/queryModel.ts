@@ -1,13 +1,21 @@
+import {SortDirection} from '../model';
+
 export type Select = {
-    type: 'select';
     table: string;
     columns: string[];
 };
 
 export type Where = {
-    type: 'where';
-    target: Query;
-    expression: string;
+    filters: string[];
 };
 
-export type Query = Select | Where;
+export type OrderBy = {
+    columns: string[];
+    directions: SortDirection[];
+};
+
+export type Query = {
+    select: Select;
+    where: Where;
+    orderBy: OrderBy;
+};

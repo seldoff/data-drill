@@ -1,8 +1,9 @@
 import sqlFactory, {Database, QueryExecResult} from 'sql.js';
-import {Result} from '../utils';
+import {getExceptionMessage} from '../utils';
 import {Model} from '../model';
-import {generateQuery} from './generateQuery';
-import {printQuery} from './printQuery';
+import {generateQuery} from './queryGenerator';
+import {printQuery} from './queryPrinter';
+import {Result} from '../result';
 
 const dbUrl =
     'https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';
@@ -86,12 +87,11 @@ function executeQueryImpl(db: Database, query: string): Result<QueryExecResult> 
             data !== undefined
                 ? {successful: true, data}
                 : {successful: false, message: 'Database returned no rows'};
-    } catch (e: any) {
+    } catch (e) {
+        const exceptionMessage = getExceptionMessage(e);
         const message: string =
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            typeof e.message === 'string'
-                ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                  `Database error: "${e.message as string}"`
+            exceptionMessage !== undefined
+                ? `Database error: "${exceptionMessage}"`
                 : 'Unknown database error';
         result = {successful: false, message};
     } finally {

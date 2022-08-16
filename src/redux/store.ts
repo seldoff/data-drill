@@ -4,7 +4,7 @@ import {
     useSelector as useSelectorVanilla,
     useDispatch as useDispatchVanilla,
 } from 'react-redux';
-import logger from 'redux-logger';
+import {createLogger} from 'redux-logger';
 import {schemaSlice} from './schema';
 import {modelSlice} from './model';
 import {uiSlice} from './ui';
@@ -15,7 +15,8 @@ export const store = configureStore({
         model: modelSlice.reducer,
         ui: uiSlice.reducer,
     },
-    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger),
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware().concat(createLogger({collapsed: true, logErrors: true})),
     devTools: process.env.NODE_ENV !== 'production',
 });
 

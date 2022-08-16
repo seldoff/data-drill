@@ -1,7 +1,7 @@
 import {Handle, NodeProps, Position} from 'react-flow-renderer';
 import {ChangeEventHandler, useCallback, useMemo} from 'react';
 import {modelActions, useDispatch, useSelector} from '../../redux/store';
-import {MTableNode} from '../../model';
+import {MNodeType, MTableNode} from '../../model';
 import {createNode} from './common';
 
 function TableNodeImpl(props: NodeProps<MTableNode>) {
@@ -12,17 +12,9 @@ function TableNodeImpl(props: NodeProps<MTableNode>) {
     const changeTable = useCallback<ChangeEventHandler<HTMLSelectElement>>(
         e => {
             const table = e.target.value;
-            dispatch(
-                modelActions.updateNodes([
-                    {
-                        id: mnode.id,
-                        type: mnode.type,
-                        table,
-                    },
-                ])
-            );
+            dispatch(modelActions.updateNodes([{id: mnode.id, type: MNodeType.table, table}]));
         },
-        [dispatch, mnode.id, mnode.type]
+        [dispatch, mnode.id]
     );
 
     const options = useMemo(() => {
@@ -44,7 +36,7 @@ function TableNodeImpl(props: NodeProps<MTableNode>) {
             <Handle type="source" id="" position={Position.Right} />
 
             <div>Table</div>
-            <select value={mnode.table} onChange={changeTable}>
+            <select value={mnode.table} onChange={changeTable} title="Select Table">
                 {options}
             </select>
         </>

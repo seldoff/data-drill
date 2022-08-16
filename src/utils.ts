@@ -14,29 +14,33 @@ export function uuid(): string {
     return v4();
 }
 
-export type OkResult<T> = {
-    successful: true;
-    data: T;
-};
-
-export type ErrorResult = {
-    successful: false;
-    message: string;
-};
-
-export type Result<T> = OkResult<T> | ErrorResult;
-
-export function map<T1, T2>(result: Result<T1>, func: (d: T1) => T2): Result<T2> {
-    if (result.successful) {
-        return {
-            successful: true,
-            data: func(result.data),
-        };
-    }
-
-    return result;
+export function patchConsoleForFlow() {
+    const oldWarn = console.warn;
+    console.warn = function (message: string, ...args) {
+        if (
+            message ===
+            '[React Flow]: The React Flow parent container needs a width and a height to render the graph. Help: https://reactflow.dev/error#400'
+        ) {
+            return;
+        }
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        oldWarn.apply(console, [message, ...args]);
+    };
 }
 
-export function bind<T1, T2>(result: Result<T1>, func: (d: T1) => Result<T2>): Result<T2> {
-    return result.successful ? func(result.data) : result;
+export function getExceptionMessage(e: any): string | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-member-access
+    return typeof e.message === 'string' ? e.message : undefined;
+}
+
+export class WhileLoopInfiniteCycleGuard {
+    private counter = 0;
+
+    public iteration() {
+        this.counter++;
+        if (this.counter > 1000) {
+            throw new Error('Possible infinite loop detected');
+        }
+    }
 }

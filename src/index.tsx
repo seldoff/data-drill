@@ -7,9 +7,11 @@ import {connectToDb} from './sql/sqlite';
 import {store, schemaActions} from './redux/store';
 import {Provider} from 'react-redux';
 import {buildSchema} from './schema';
-
 import {Spinner} from './components/Spinner';
 import {DbContext} from './components/DbContext';
+import {patchConsoleForFlow} from './utils';
+
+patchConsoleForFlow();
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(<Spinner />);
