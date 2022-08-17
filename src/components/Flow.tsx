@@ -135,7 +135,7 @@ export function Flow() {
     const onSelectionChange = useCallback<OnSelectionChangeFunc>(
         (params: OnSelectionChangeParams) => {
             const id = params.nodes.length === 1 ? params.nodes[0].id : undefined;
-            dispatch(uiActions.setSelectedNode(id));
+            dispatch(uiActions.nodeSelected(id));
         },
         [dispatch]
     );

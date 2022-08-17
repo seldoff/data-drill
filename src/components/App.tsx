@@ -1,5 +1,5 @@
 import '../styles/App.css';
-import {modelActions, uiActions, useDispatch, useSelector} from '../redux/store';
+import {modelActions, useDispatch, useSelector} from '../redux/store';
 import {Spinner} from './Spinner';
 import {SelectedNodeResultTable} from './SelectedNodeResultTable';
 import {Flow} from './Flow';
@@ -22,10 +22,7 @@ function App() {
     const addFilter = useCallback(() => addNode(MNodeType.filter), [addNode]);
     const addResult = useCallback(() => addNode(MNodeType.result), [addNode]);
 
-    const clear = useCallback(() => {
-        dispatch(uiActions.setSelectedNode(undefined));
-        dispatch(modelActions.clear());
-    }, [dispatch]);
+    const clear = useCallback(() => dispatch(modelActions.clear()), [dispatch]);
     const save = useCallback(() => dispatch(modelActions.save()), [dispatch]);
     const restore = useCallback(() => dispatch(modelActions.restore()), [dispatch]);
 

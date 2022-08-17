@@ -7,9 +7,9 @@ type UiState = {
 
 export const uiSlice = createSlice({
     name: 'ui',
-    initialState: {} as UiState,
+    initialState: {selectedNode: undefined} as UiState,
     reducers: {
-        setSelectedNode(state, action: PayloadAction<string | undefined>) {
+        nodeSelected(state, action: PayloadAction<string | undefined>) {
             state.selectedNode = action.payload;
         },
     },
