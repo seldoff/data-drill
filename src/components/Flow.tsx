@@ -8,16 +8,14 @@ import ReactFlow, {
     useNodesState,
     MarkerType,
     OnEdgesDelete,
-} from 'react-flow-renderer';
-import {nodeTypes} from './nodes/common';
-import {modelActions, uiActions, useDispatch, useSelector} from '../redux/store';
-import {
     Node,
     NodeDragHandler,
     OnConnect,
     OnNodesDelete,
     OnSelectionChangeFunc,
-} from 'react-flow-renderer/dist/esm/types';
+} from 'react-flow-renderer';
+import {nodeTypes} from './nodes/common';
+import {modelActions, uiActions, useDispatch, useSelector} from '../redux/store';
 import {useCallback, useEffect} from 'react';
 import {NodeUpdate} from '../redux/model';
 import {Connection, OnSelectionChangeParams} from 'react-flow-renderer/dist/esm/types/general';
