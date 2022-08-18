@@ -29,9 +29,8 @@ export function SelectedNodeResultTable() {
 
     const {sql, data} = result.data;
     const left = data.successful ? (
-        <div style={{overflowY: 'auto', maxHeight: '200px'}}>
-            <Table data={data.data} />
-        </div>
+        /*<Table data={data.data} />*/
+        <div>Results</div>
     ) : (
         <div className="error-msg">{data.message}</div>
     );
@@ -43,18 +42,15 @@ export function SelectedNodeResultTable() {
     }
 
     return (
-        <table style={{tableLayout: 'fixed', width: '100%'}}>
-            <tbody>
-                <tr>
-                    <td>{left}</td>
-                    <td style={{verticalAlign: 'top'}}>
-                        <span>Query </span>
-                        <SqlDisplay sql={sql} />
-                        <p />
-                        {rowsNumber}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div style={{display: 'flex', height: '100%'}}>
+            <div style={{width: '60%', overflowY: 'clip'}}>{left}</div>
+            <div style={{borderLeft: '1px solid silver'}} />
+            <div style={{width: '40%', overflowY: 'auto'}}>
+                <span>Query </span>
+                <SqlDisplay sql={sql} />
+                <p />
+                {rowsNumber}
+            </div>
+        </div>
     );
 }
