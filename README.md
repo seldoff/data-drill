@@ -1,4 +1,4 @@
-<img src="/public/drill.webp" alt="Data Drill" style="width:128px;"/> 
+<img src="./public/drill.webp" alt="Data Drill" style="width:128px;"/> 
 
 # Data-Drill
 
