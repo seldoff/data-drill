@@ -1,17 +1,10 @@
 import '../styles/App.css';
-import {useSelector} from '../redux/store';
-import {Spinner} from './Spinner';
 import {SelectedNodeResultTable} from './SelectedNodeResultTable';
 import {Flow} from './Flow';
 import {FlowContainer} from './FlowContainer';
 import {ButtonsPanel} from './ButtonsPanel';
 
-function App() {
-    const isLoaded = useSelector(s => s.schema.isLoaded);
-    if (!isLoaded) {
-        return <Spinner />;
-    }
-
+export function App() {
     return (
         <div
             style={{
