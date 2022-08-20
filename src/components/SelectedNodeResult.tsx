@@ -1,3 +1,4 @@
+import '../styles/SelectedNodeResult.css';
 import {useSelector} from '../redux/store';
 import {SqlDisplay} from './SqlDisplay';
 import {useContext, useEffect, useState} from 'react';
@@ -5,7 +6,7 @@ import {executeQueryForNode, QueryForNodeResult} from '../sql/sqlite';
 import {DbContext} from './DbContext';
 import {Table} from './Table';
 
-export function SelectedNodeResultTable() {
+export function SelectedNodeResult() {
     const selectedNode = useSelector(s => s.ui.selectedNode);
     const model = useSelector(s => s.model.model);
     const db = useContext(DbContext)!;
@@ -29,8 +30,9 @@ export function SelectedNodeResultTable() {
 
     const {sql, data} = result.data;
     const left = data.successful ? (
-        /*<Table data={data.data} />*/
-        <div>Results</div>
+        <div className="selected-node-result-table">
+            <Table data={data.data} />
+        </div>
     ) : (
         <div className="error-msg">{data.message}</div>
     );
@@ -43,9 +45,9 @@ export function SelectedNodeResultTable() {
 
     return (
         <div style={{display: 'flex', height: '100%'}}>
-            <div style={{width: '60%', overflowY: 'clip'}}>{left}</div>
+            <div style={{width: '60%', overflowY: 'auto'}}>{left}</div>
             <div style={{borderLeft: '1px solid silver'}} />
-            <div style={{width: '40%', overflowY: 'auto'}}>
+            <div className="selected-node-result-query" style={{width: '40%', overflowY: 'auto'}}>
                 <span>Query </span>
                 <SqlDisplay sql={sql} />
                 <p />

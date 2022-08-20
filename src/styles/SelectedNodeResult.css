@@ -1,0 +1,14 @@
+.selected-node-result-table td:first-child,
+.selected-node-result-table th:first-child {
+    padding-left: 4px;
+}
+
+.selected-node-result-table td:last-child,
+.selected-node-result-table th:last-child {
+    padding-right: 4px;
+}
+
+.selected-node-result-query {
+    padding-left: 4px;
+    padding-right: 4px;
+}

@@ -3,8 +3,8 @@ import '../styles/Table.css';
 
 export function Table(props: {data: QueryExecResult}) {
     return (
-        <table>
-            <thead>
+        <table style={{width: '100%'}}>
+            <thead style={{textAlign: 'left'}}>
                 <tr>
                     {props.data.columns.map(c => (
                         <th key={c}>{c}</th>
