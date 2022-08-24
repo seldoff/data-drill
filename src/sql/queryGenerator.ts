@@ -1,7 +1,7 @@
-import {OrderBy, Query, Select, Where} from './queryModel';
+import {Aggregation, OrderBy, Query, Select, Where} from './queryModel';
 import {
     findParentNodeByType,
-    getParentNode,
+    MAggregationNode,
     MColumnsNode,
     MFilterNode,
     MNode,
@@ -9,8 +9,9 @@ import {
     Model,
     MSortNode,
     MTableNode,
+    validateAggregation,
 } from '../model';
-import {map, Result} from '../result';
+import {flatMap, map, Result} from '../result';
 import {WhileLoopInfiniteCycleGuard} from '../utils';
 
 function find<T extends MNode>(node: MNode, type: MNodeType, model: Model): T[] {
@@ -45,23 +46,49 @@ function buildSelect(node: MNode, model: Model): Result<Select> {
     };
 }
 
-function buildWhere(node: MNode, model: Model): Where {
+function buildWhere(node: MNode, model: Model): Where | undefined {
     const filterNodes = find<MFilterNode>(node, MNodeType.filter, model).reverse();
+    if (filterNodes.length === 0) {
+        return undefined;
+    }
     const filters = filterNodes.map(f => f.filter.trim()).filter(f => f.length > 0);
     return {filters};
 }
 
-function buildOrderBy(node: MNode, model: Model): OrderBy {
+function buildOrderBy(node: MNode, model: Model): OrderBy | undefined {
     const sortNodes = find<MSortNode>(node, MNodeType.sort, model).reverse();
+    if (sortNodes.length === 0) {
+        return undefined;
+    }
     const columns = sortNodes.map(n => n.selectedColumns).flat();
     const directions = sortNodes.map(n => n.sortDirections).flat();
     return {columns, directions};
 }
 
+function buildAggregation(node: MNode, model: Model): Result<Aggregation | undefined> {
+    if (node.type !== MNodeType.aggregation) {
+        return {successful: true, data: undefined};
+    }
+
+    return flatMap(validateAggregation(node, model), n => {
+        const {func, column, distinct} = n;
+        return {successful: true, data: {func: func!, column: column!, distinct}};
+    });
+}
+
 export function generateQuery(nodeId: string, model: Model): Result<Query> {
     const node = model.find(n => n.id === nodeId)!;
     const select = buildSelect(node, model);
-    return map(select, s => {
-        return {select: s, where: buildWhere(node, model), orderBy: buildOrderBy(node, model)};
-    });
+    const aggregation = buildAggregation(node, model);
+
+    return flatMap(select, s =>
+        map(aggregation, a => {
+            return {
+                select: s,
+                where: buildWhere(node, model),
+                orderBy: buildOrderBy(node, model),
+                aggregation: a,
+            };
+        })
+    );
 }

@@ -17,6 +17,7 @@ export function ButtonsPanel() {
     const addFilter = useCallback(() => addNode(MNodeType.filter), [addNode]);
     const addSort = useCallback(() => addNode(MNodeType.sort), [addNode]);
     const addResult = useCallback(() => addNode(MNodeType.result), [addNode]);
+    const addAggregation = useCallback(() => addNode(MNodeType.aggregation), [addNode]);
 
     const clear = useCallback(() => dispatch(modelActions.clear()), [dispatch]);
     const save = useCallback(() => dispatch(modelActions.save()), [dispatch]);
@@ -29,6 +30,7 @@ export function ButtonsPanel() {
                 <button onClick={addColumns}>Columns</button>
                 <button onClick={addFilter}>Filter</button>
                 <button onClick={addSort}>Sort</button>
+                <button onClick={addAggregation}>Aggregation</button>
                 <button onClick={addResult}>Result</button>
             </div>
             <div style={{display: 'flex', gap: '4px'}}>

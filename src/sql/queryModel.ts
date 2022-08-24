@@ -1,4 +1,4 @@
-import {SortDirection} from '../model';
+import {AggregationFunc, SortDirection} from '../model';
 
 export type Select = {
     table: string;
@@ -14,8 +14,15 @@ export type OrderBy = {
     directions: SortDirection[];
 };
 
+export type Aggregation = {
+    column: string;
+    func: AggregationFunc;
+    distinct: boolean;
+};
+
 export type Query = {
     select: Select;
-    where: Where;
-    orderBy: OrderBy;
+    where: Where | undefined;
+    orderBy: OrderBy | undefined;
+    aggregation: Aggregation | undefined;
 };

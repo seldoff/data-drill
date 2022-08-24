@@ -1,6 +1,7 @@
-import {XYPosition} from 'react-flow-renderer/dist/esm/types/utils';
+import {XYPosition} from 'react-flow-renderer';
 import {uuid, WhileLoopInfiniteCycleGuard} from './utils';
-import {type} from 'os';
+import exp from 'constants';
+import {Result} from './result';
 
 export enum MNodeType {
     table = 'table',
@@ -8,6 +9,7 @@ export enum MNodeType {
     result = 'result',
     columns = 'columns',
     sort = 'sort',
+    aggregation = 'aggregation',
 }
 
 type MBaseNode = {
@@ -50,7 +52,29 @@ export type MSortNode = MBaseNode & {
     sortDirections: SortDirection[];
 };
 
-export type MNode = MTableNode | MFilterNode | MResultNode | MColumnsNode | MSortNode;
+export enum AggregationFunc {
+    Avg = 'avg',
+    Count = 'count',
+    Max = 'max',
+    Min = 'min',
+    Sum = 'sum',
+}
+
+export type MAggregationNode = MBaseNode & {
+    type: MNodeType.aggregation;
+    inputNode?: string;
+    func?: AggregationFunc;
+    column?: string;
+    distinct: boolean;
+};
+
+export type MNode =
+    | MTableNode
+    | MFilterNode
+    | MResultNode
+    | MColumnsNode
+    | MSortNode
+    | MAggregationNode;
 
 export type Model = MNode[];
 
@@ -60,6 +84,7 @@ export function getInputNode(node: MNode): string | undefined {
         case MNodeType.result:
         case MNodeType.columns:
         case MNodeType.sort:
+        case MNodeType.aggregation:
             return node.inputNode;
         case MNodeType.table:
             return undefined;
@@ -80,6 +105,8 @@ export function createEmptyNode(type: MNodeType): MNode {
             return {type, id, position, selectedColumns: []};
         case MNodeType.sort:
             return {type, id, position, selectedColumns: [], sortDirections: []};
+        case MNodeType.aggregation:
+            return {type, id, position, distinct: false};
     }
 }
 
@@ -113,4 +140,24 @@ export function findParentNodeByType<T extends MNode>(
     type: MNodeType
 ): T | undefined {
     return findParentNode(node, model, n => n.type === type);
+}
+
+export function validateAggregation(
+    aggregation: MAggregationNode,
+    model: Model
+): Result<MAggregationNode> {
+    if (aggregation.inputNode === undefined) {
+        return {successful: false, message: 'Please provide input'};
+    }
+    const tableNode = findParentNodeByType<MTableNode>(aggregation, model, MNodeType.table);
+    if (tableNode?.table === undefined) {
+        // TODO
+    }
+    if (aggregation.func === undefined) {
+        return {successful: false, message: 'Please select function'};
+    }
+    if (aggregation.column === undefined) {
+        return {successful: false, message: 'Please select column'};
+    }
+    return {successful: true, data: aggregation};
 }
